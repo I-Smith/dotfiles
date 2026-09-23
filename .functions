@@ -1,0 +1,73 @@
+function installJdk() {
+	release=$1
+	if [ -z $release ]; then
+		echo "ERROR: No release specified"
+		echo "usage: $0 <jdk release major number>"
+		return 1
+	elif [ 2 -lt ${#release} ]; then
+		echo "ERROR: You tried to download release ${release} which is not a valid release. Your options are 8, 9, 10, 11, 12, 13, etc"
+		echo "usage: $0 <jdk release major number>"
+		return 2
+	fi
+
+	BINARY_LINK=$(curl -fsSL "https://api.adoptopenjdk.net/v2/info/releases/openjdk${release}?openjdk_impl=hotspot&os=mac&release=latest&type=jdk" | jq --raw-output '.binaries[0].binary_link')
+	echo $BINARY_LINK
+
+	mkdir -p ~/development/local/jdk && cd $_
+	curl -fsSL $BINARY_LINK | tar -xzv
+
+	DIRNAME=$(ls -t | head -1)
+	if [ -L $release ]; then
+		rm $release
+	fi
+	ln -s $DIRNAME/Contents/Home $release
+}
+
+function mfa() {
+	command -v aws >/dev/null 2>&1 || { echo "AWS cli is not installed."; kill -INT $$ }
+	if [ -z $AWS_MFA_ARN ]; then
+		echo "AWS_MFA_ARN is not specified. Please add this environment variable to enable this functionality"
+		kill -INT $$
+	fi
+
+	if [ -z $1 ]; then
+		echo "MFA code is required"
+		kill -INT $$
+	fi
+
+	unset AWS_ACCESS_KEY_ID
+	unset AWS_SECRET_ACCESS_KEY
+	unset AWS_SESSION_TOKEN
+
+	TOKEN=$(aws sts get-session-token --output=json \
+					  --serial-number $AWS_MFA_ARN \
+					  --token-code $1)
+
+	export AWS_ACCESS_KEY_ID=$( echo $TOKEN | jq -r '.Credentials.AccessKeyId')
+	export AWS_SECRET_ACCESS_KEY=$( echo $TOKEN | jq -r '.Credentials.SecretAccessKey')
+	export AWS_SESSION_TOKEN=$( echo $TOKEN | jq -r '.Credentials.SessionToken')
+}
+
+function assumeK8sDev() {
+	unset AWS_ACCESS_KEY_ID
+        unset AWS_SECRET_ACCESS_KEY
+        unset AWS_SESSION_TOKEN
+
+	OUT=$(aws sts assume-role --role-arn "arn:aws:iam::546012175009:role/k8sDev" --role-session-name AWSCLI-Session)
+
+	AWS_ACCESS_KEY_ID=$( echo $OUT | jq -r '.Credentials.AccessKeyId')
+	AWS_SECRET_ACCESS_KEY=$( echo $OUT | jq -r '.Credentials.SecretAccessKey')
+	AWS_SESSION_TOKEN=$( echo $OUT | jq -r '.Credentials.SessionToken')
+
+	export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+	export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+	export AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN
+}
+
+function awslogin {
+    aws sso login --sso-session bellum_ai
+}
+
+function psql_spendigo_local {
+	psql -h localhost -U spendigo -d spendigo_backend_development -W
+}

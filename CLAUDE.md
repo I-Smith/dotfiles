@@ -1,0 +1,95 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Overview
+
+Personal dotfiles, editor config, and machine setup for macOS (and Linux), managed with
+[GNU Stow](https://www.gnu.org/software/stow/). Each top-level directory is a stow
+"package" whose contents mirror `$HOME` — stowing it symlinks its files into place, so
+edits anywhere auto-sync back to the repo. No build system or test suite.
+
+Successor to the old `misc-setup` repo, which used hand-rolled symlink logic in
+`setup.sh`. Stow replaces that logic; everything else (install scripts, secrets hook,
+monthly sync) carried over.
+
+## New Machine Setup
+
+```zsh
+git clone <repo> ~/dotfiles
+cd ~/dotfiles
+./install.sh   # install all software (Homebrew, languages, CLI tools, apps)
+./setup.sh     # stow all packages, wire up git hooks and the monthly-sync launchd agent
+```
+
+`install.sh` is idempotent and safe to re-run. `setup.sh` runs `stow -R`, which is also
+idempotent, and backs up any pre-existing real file at a target path as `.bak` before
+stowing over it.
+
+## Install System
+
+`install.sh` detects OS and delegates:
+- **macOS** → `install/macos.sh`: installs Homebrew, runs `brew bundle --file=install/Brewfile`, oh-my-zsh, cocoapods
+- **Linux** → `install/linux.sh`: apt packages + per-tool repos (gh, kubectl, helm, terraform, awscli, eksctl), oh-my-zsh; prints GUI app reminder at the end
+- **Both** → `install/common.sh`: oh-my-zsh custom plugins, nvm + LTS Node, global npm packages
+
+`install/Brewfile` is the source of truth for all Homebrew packages on macOS. To add a new tool: add it to the Brewfile (and to `linux.sh` if it should also be on Linux), then commit.
+
+A monthly launchd agent (`com.ismith.dotfiles.monthly-sync`, `9:03am` on the 1st, loaded by
+`setup.sh` from `launchd/`) runs `hooks/monthly-sync.sh`, which diffs `brew leaves`/`brew list
+--cask` against the Brewfile, appends new packages, commits, pushes to `auto/monthly-sync`,
+and opens a PR into `main`. Notifies via macOS `terminal-notifier` banner (with PR URL) and
+GitHub's built-in PR email notification. Log: `~/.monthly-sync.log`.
+
+## What's Tracked (stow packages)
+
+| Package | Repo path | Symlinked to |
+|---------|-----------|-------------|
+| `zsh/` | `.zshrc`, `.zshenv`, `.zprofile`, `.functions` | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.functions` |
+| `vim/` | `.vimrc` | `~/.vimrc` |
+| `cursor/` | `.cursor/mcp.json` | `~/.cursor/mcp.json` |
+| `cursor/` | `Library/Application Support/Cursor/User/settings.json` | same path under `~/` |
+| `cursor/` | `Library/Application Support/Cursor/User/keybindings.json` | same path under `~/` |
+| `claude/` | `.claude/settings.json` | `~/.claude/settings.json` |
+| `launchd/` | `Library/LaunchAgents/com.ismith.dotfiles.monthly-sync.plist` | same path under `~/` |
+
+Not tracked: Cursor's `extensions/`, `plans/`, `projects/`, `argv.json` (machine-specific);
+Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`, `commands/`
+(none currently tracked — add a `commands/` dir under `claude/.claude/` if that changes),
+all cache/session/telemetry directories.
+
+Not stow packages (adding a symlinked file elsewhere in `$HOME` is enough — just make a
+new top-level dir here that mirrors the target path and add it to `PACKAGES` in `setup.sh`).
+
+## Non-stow pieces
+
+- `hooks/pre-commit` — scans staged files for secrets before every commit to *this* repo. Wired up via `git config core.hooksPath hooks` (set by `setup.sh`) — no symlinking needed, since `.git/hooks` isn't something stow can target from outside a checkout.
+- `hooks/secrets-check.sh` — Claude Code `PreToolUse` hook (referenced by absolute path from `claude/.claude/settings.json`) that blocks `git commit`/`push`/`gh pr create` when it detects likely secrets.
+- `hooks/monthly-sync.sh` + `hooks/monthly-sync-prompt.md` — the monthly drift-check job (see above).
+- `install.sh`, `install/` — machine bootstrap, not per-file config, so stow doesn't apply.
+
+## File Roles
+
+- `.zshrc` — oh-my-zsh setup, plugins, and aliases. Sources `.zshenv`, `.zprofile`, and `.functions` explicitly at the end.
+- `.zprofile` — PATH construction (Homebrew, Go, Android SDK, libpq, GNU make) and nvm initialization.
+- `.zshenv` — exported environment variables: `JAVA_HOME`, `AWS_MFA_ARN`, `AWS_PROFILE`, `GOPRIVATE`. `AWS_MFA_ARN`/`AWS_PROFILE`/`GOPRIVATE` ship blank — fill in per machine.
+- `.functions` — shell functions: `installJdk` (AdoptOpenJDK via API), `mfa` (AWS STS MFA session), `assumeK8sDev` (assume IAM role), `awslogin` (AWS SSO), `psql_spendigo_local`.
+- `.vimrc` — vim settings with spell-check enabled for `.md` files.
+
+## Applying Changes
+
+```zsh
+source ~/.zshrc          # reload everything
+source ~/.functions      # reload only functions
+```
+
+Cursor and Claude Code pick up config changes automatically (Cursor may need a restart).
+Editing a symlinked file anywhere edits the repo directly — commit from `~/dotfiles` when done.
+
+## Architecture Notes
+
+`.zshrc` is the entry point and manually sources `.zshenv`, `.zprofile`, and `.functions` — this is intentional and non-standard (normally `.zshenv` and `.zprofile` are sourced automatically by zsh at login). Edits to PATH or env vars belong in `.zprofile` or `.zshenv` respectively, not in `.zshrc`.
+
+AWS credential helpers in `.functions` (`mfa`, `assumeK8sDev`) rely on `AWS_MFA_ARN` being set in `.zshenv` and on `aws` + `jq` being present on `PATH`.
+
+Adding a new stow package: create `<name>/<path/mirroring/$HOME>`, add `<name>` to `PACKAGES` in `setup.sh`, run `./setup.sh` (or `stow -R -t "$HOME" <name>` directly) to link it.

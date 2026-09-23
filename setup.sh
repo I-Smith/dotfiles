@@ -22,7 +22,10 @@ for pkg in "${PACKAGES[@]}"; do
   while IFS= read -r -d '' file; do
     rel="${file#"$REPO"/"$pkg"/}"
     dest="$HOME/$rel"
-    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+    # -e alone misses dangling symlinks (e.g. leftovers from the old misc-setup repo
+    # pointing at a path that no longer exists) — check -L too, and use -ef to skip
+    # only when dest is already correctly linked to this exact repo file.
+    if { [ -e "$dest" ] || [ -L "$dest" ]; } && ! [ "$dest" -ef "$file" ]; then
       echo "  backup  $dest → ${dest}.bak"
       mkdir -p "$(dirname "${dest}.bak")"
       mv "$dest" "${dest}.bak"

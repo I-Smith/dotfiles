@@ -10,8 +10,9 @@ Personal dotfiles, editor config, and machine setup for macOS (and Linux), manag
 edits anywhere auto-sync back to the repo. No build system or test suite.
 
 Successor to the old `misc-setup` repo, which used hand-rolled symlink logic in
-`setup.sh`. Stow replaces that logic; everything else (install scripts, secrets hook,
-monthly sync) carried over.
+`setup.sh`. Stow replaces that logic; the install scripts and secrets hook carried over.
+No automated push/pull of this repo runs anywhere — syncing across machines is manual,
+on purpose.
 
 ## New Machine Setup
 
@@ -19,7 +20,7 @@ monthly sync) carried over.
 git clone <repo> ~/dotfiles
 cd ~/dotfiles
 ./install.sh   # install all software (Homebrew, languages, CLI tools, apps)
-./setup.sh     # stow all packages, wire up git hooks and the monthly-sync launchd agent
+./setup.sh     # stow all packages, wire up the git secrets hook
 ```
 
 `install.sh` is idempotent and safe to re-run. `setup.sh` runs `stow -R`, which is also
@@ -35,12 +36,6 @@ stowing over it.
 
 `install/Brewfile` is the source of truth for all Homebrew packages on macOS. To add a new tool: add it to the Brewfile (and to `linux.sh` if it should also be on Linux), then commit.
 
-A monthly launchd agent (`com.ismith.dotfiles.monthly-sync`, `9:03am` on the 1st, loaded by
-`setup.sh` from `launchd/`) runs `hooks/monthly-sync.sh`, which diffs `brew leaves`/`brew list
---cask` against the Brewfile, appends new packages, commits, pushes to `auto/monthly-sync`,
-and opens a PR into `main`. Notifies via macOS `terminal-notifier` banner (with PR URL) and
-GitHub's built-in PR email notification. Log: `~/.monthly-sync.log`.
-
 ## What's Tracked (stow packages)
 
 | Package | Repo path | Symlinked to |
@@ -51,7 +46,6 @@ GitHub's built-in PR email notification. Log: `~/.monthly-sync.log`.
 | `cursor/` | `Library/Application Support/Cursor/User/settings.json` | same path under `~/` |
 | `cursor/` | `Library/Application Support/Cursor/User/keybindings.json` | same path under `~/` |
 | `claude/` | `.claude/settings.json` | `~/.claude/settings.json` |
-| `launchd/` | `Library/LaunchAgents/com.ismith.dotfiles.monthly-sync.plist` | same path under `~/` |
 
 Not tracked: Cursor's `extensions/`, `plans/`, `projects/`, `argv.json` (machine-specific);
 Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`, `commands/`
@@ -65,7 +59,6 @@ new top-level dir here that mirrors the target path and add it to `PACKAGES` in 
 
 - `hooks/pre-commit` — scans staged files for secrets before every commit to *this* repo. Wired up via `git config core.hooksPath hooks` (set by `setup.sh`) — no symlinking needed, since `.git/hooks` isn't something stow can target from outside a checkout.
 - `hooks/secrets-check.sh` — Claude Code `PreToolUse` hook (referenced by absolute path from `claude/.claude/settings.json`) that blocks `git commit`/`push`/`gh pr create` when it detects likely secrets.
-- `hooks/monthly-sync.sh` + `hooks/monthly-sync-prompt.md` — the monthly drift-check job (see above).
 - `install.sh`, `install/` — machine bootstrap, not per-file config, so stow doesn't apply.
 
 ## File Roles

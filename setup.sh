@@ -5,7 +5,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(zsh vim cursor claude launchd)
+PACKAGES=(zsh vim cursor claude)
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "GNU Stow is not installed."
@@ -38,18 +38,8 @@ stow -v -R -t "$HOME" "${PACKAGES[@]}"
 echo ""
 echo "==> Git hooks"
 git config core.hooksPath hooks
-chmod +x hooks/pre-commit hooks/secrets-check.sh hooks/monthly-sync.sh
+chmod +x hooks/pre-commit hooks/secrets-check.sh
 echo "  core.hooksPath -> hooks/ (pre-commit secrets scan active)"
-
-echo ""
-echo "==> Monthly sync (launchd)"
-PLIST="$HOME/Library/LaunchAgents/com.ismith.dotfiles.monthly-sync.plist"
-if launchctl list | grep -q com.ismith.dotfiles.monthly-sync; then
-  echo "  already loaded: com.ismith.dotfiles.monthly-sync"
-else
-  launchctl load "$PLIST" 2>/dev/null && echo "  loaded: runs at 9:03am on the 1st of each month" \
-    || echo "  could not load $PLIST — load manually with: launchctl load $PLIST"
-fi
 
 echo ""
 echo "Done. Open a new shell and restart Cursor to pick up changes."
@@ -57,6 +47,3 @@ echo ""
 echo "Manual steps:"
 echo "  1. If this is a new machine, run ./install.sh first to install all software."
 echo "  2. Fill in ~/.zshenv: AWS_MFA_ARN, GOPRIVATE, AWS_PROFILE (currently blank placeholders)."
-echo "  3. Store Gmail app password in Keychain for monthly-sync email notifications:"
-echo "     security add-generic-password -a \"\$USER\" -s \"gmail-app-password\" -w \"your-app-password\""
-echo "     Get an app password at: myaccount.google.com/apppasswords"

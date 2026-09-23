@@ -5,7 +5,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(zsh vim cursor claude)
+PACKAGES=(zsh vim claude)
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "GNU Stow is not installed."
@@ -42,7 +42,7 @@ chmod +x hooks/pre-commit hooks/secrets-check.sh
 echo "  core.hooksPath -> hooks/ (pre-commit secrets scan active)"
 
 echo ""
-echo "Done. Open a new shell and restart Cursor to pick up changes."
+echo "Done. Open a new shell to pick up changes."
 echo ""
 echo "Manual steps:"
 echo "  1. If this is a new machine, run ./install.sh first to install all software."

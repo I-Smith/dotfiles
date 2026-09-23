@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-Personal dotfiles, editor config, and machine setup for macOS (and Linux), managed with
+Personal dotfiles, Claude Code config, and machine setup for macOS (and Linux), managed with
 [GNU Stow](https://www.gnu.org/software/stow/). Each top-level directory is a stow
 "package" whose contents mirror `$HOME` — stowing it symlinks its files into place, so
 edits anywhere auto-sync back to the repo. No build system or test suite.
@@ -42,15 +42,11 @@ stowing over it.
 |---------|-----------|-------------|
 | `zsh/` | `.zshrc`, `.zshenv`, `.zprofile`, `.functions` | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.functions` |
 | `vim/` | `.vimrc` | `~/.vimrc` |
-| `cursor/` | `.cursor/mcp.json` | `~/.cursor/mcp.json` |
-| `cursor/` | `Library/Application Support/Cursor/User/settings.json` | same path under `~/` |
-| `cursor/` | `Library/Application Support/Cursor/User/keybindings.json` | same path under `~/` |
 | `claude/` | `.claude/settings.json` | `~/.claude/settings.json` |
 
-Not tracked: Cursor's `extensions/`, `plans/`, `projects/`, `argv.json` (machine-specific);
-Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`, `commands/`
-(none currently tracked — add a `commands/` dir under `claude/.claude/` if that changes),
-all cache/session/telemetry directories.
+Not tracked: Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`,
+`commands/` (none currently tracked — add a `commands/` dir under `claude/.claude/` if that
+changes), all cache/session/telemetry directories.
 
 Not stow packages (adding a symlinked file elsewhere in `$HOME` is enough — just make a
 new top-level dir here that mirrors the target path and add it to `PACKAGES` in `setup.sh`).
@@ -76,7 +72,7 @@ source ~/.zshrc          # reload everything
 source ~/.functions      # reload only functions
 ```
 
-Cursor and Claude Code pick up config changes automatically (Cursor may need a restart).
+Claude Code picks up config changes automatically.
 Editing a symlinked file anywhere edits the repo directly — commit from `~/dotfiles` when done.
 
 ## Architecture Notes

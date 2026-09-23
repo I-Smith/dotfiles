@@ -43,10 +43,12 @@ stowing over it.
 | `zsh/` | `.zshrc`, `.zshenv`, `.zprofile`, `.functions` | `~/.zshrc`, `~/.zshenv`, `~/.zprofile`, `~/.functions` |
 | `vim/` | `.vimrc` | `~/.vimrc` |
 | `claude/` | `.claude/settings.json` | `~/.claude/settings.json` |
+| `claude/` | `.claude/CLAUDE.md` | `~/.claude/CLAUDE.md` (global instructions) |
+| `claude/` | `.claude/agents/*.md` | `~/.claude/agents/*.md` (custom subagent definitions) |
 
-Not tracked: Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`,
-`commands/` (none currently tracked — add a `commands/` dir under `claude/.claude/` if that
-changes), all cache/session/telemetry directories.
+Not tracked: Claude Code's `settings.local.json`, `history.jsonl`, `projects/`, `skills/`
+(reinstalled by the plugin system), `commands/` (none currently in use — add a `commands/`
+dir under `claude/.claude/` if that changes), all cache/session/telemetry directories.
 
 Not stow packages (adding a symlinked file elsewhere in `$HOME` is enough — just make a
 new top-level dir here that mirrors the target path and add it to `PACKAGES` in `setup.sh`).

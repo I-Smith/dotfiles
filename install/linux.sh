@@ -20,8 +20,9 @@ sudo apt-get install -y build-essential curl wget unzip git
 echo ""
 echo "==> CLI Utilities"
 # jq: JSON processor | fzf: fuzzy finder | grep: text search | coreutils: GNU core utils
+# tmux: terminal multiplexer
 # zsh-syntax-highlighting: fish-style syntax highlighting for zsh (brew: zsh-syntax-highlighting)
-sudo apt-get install -y jq fzf grep coreutils zsh-syntax-highlighting
+sudo apt-get install -y jq fzf grep coreutils tmux zsh-syntax-highlighting
 
 echo ""
 echo "==> Languages & Runtimes"

@@ -26,6 +26,17 @@ else
 fi
 
 echo ""
+echo "==> Tmux Plugin Manager (TPM)"
+
+TPM_DIR="$HOME/.tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+  git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+  echo "  installed tpm — open tmux and press prefix + I to install plugins (resurrect, continuum, sensible)"
+else
+  echo "  already installed: tpm"
+fi
+
+echo ""
 echo "==> Node (via nvm)"
 
 export NVM_DIR="$HOME/.nvm"

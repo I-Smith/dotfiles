@@ -5,7 +5,7 @@
 set -euo pipefail
 
 REPO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(zsh vim claude)
+PACKAGES=(zsh vim claude tmux git npm)
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "GNU Stow is not installed."

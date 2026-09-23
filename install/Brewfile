@@ -45,6 +45,7 @@ brew "jq"                       # JSON processor
 brew "pipx"                     # isolated Python tool installs
 brew "pre-commit"               # git pre-commit hooks
 brew "stow"                     # symlink farm manager — manages this very repo
+brew "tmux"                     # terminal multiplexer
 brew "tree-sitter"              # parser toolkit
 brew "watchman"                 # file watcher (used by React Native)
 brew "wget"                     # file downloader

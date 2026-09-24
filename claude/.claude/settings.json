@@ -38,6 +38,7 @@
   "enableWorkflows": true,
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
+    "gopls-lsp@claude-plugins-official": true,
     "ruby-lsp@claude-plugins-official": true,
     "figma@claude-plugins-official": true
   },

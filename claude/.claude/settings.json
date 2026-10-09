@@ -19,6 +19,7 @@
       "Bash(git restore *)"
     ]
   },
+  "model": "sonnet",
   "hooks": {
     "PreToolUse": [
       {
@@ -34,7 +35,6 @@
       }
     ]
   },
-  "model": "sonnet",
   "enableWorkflows": true,
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
@@ -47,6 +47,10 @@
   "modelSettings": {
     "claude-sonnet-5": {
       "effortLevel": "medium"
+    },
+    "claude-opus-5-5": {
+      "effortLevel": "medium",
+      "autoCompactWindow": "auto"
     }
   },
   "autoCompactWindow": 500000,

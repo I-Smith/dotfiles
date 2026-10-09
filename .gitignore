@@ -1,1 +1,5 @@
 .DS_Store
+
+# Local-only, may hold sensitive config
+settings.local.json
+.functions.local

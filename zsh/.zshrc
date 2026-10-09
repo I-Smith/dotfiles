@@ -125,6 +125,7 @@ alias pip="pip3"
 source ~/.zshenv
 source ~/.zprofile
 fpath=($fpath ~/.zsh/completion)
+[ -f ~/.secrets ] && source ~/.secrets
 [ -f ~/.functions ] && source ~/.functions
 [ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env"
 command -v mise >/dev/null 2>&1 && eval "$(mise activate zsh)"

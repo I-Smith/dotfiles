@@ -54,5 +54,8 @@
   "editorMode": "normal",
   "preferredNotifChannel": "auto",
   "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/usage-band"
+  }
 }

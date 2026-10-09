@@ -1,0 +1,1 @@
+{ "name": "usage-band", "version": "0.1.0", "description": "Compact color-coded context, rate-limit and cost line above the prompt", "types": "./types/index.d.ts" }

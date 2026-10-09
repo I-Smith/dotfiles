@@ -30,8 +30,7 @@ brew "stripe"                   # Stripe CLI
 brew "golang-migrate"           # database migrations
 
 # ── Databases ─────────────────────────────────────────────────────────────────
-brew "postgresql@14"            # Postgres 14 (legacy project support)
-brew "postgresql@16"            # Postgres 16 (current)
+brew "postgresql"               # Postgres (alias for the latest postgresql@N)
 
 # ── CLI Utilities ─────────────────────────────────────────────────────────────
 brew "commitizen"               # conventional commits

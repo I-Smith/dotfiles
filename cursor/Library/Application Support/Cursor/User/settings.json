@@ -67,4 +67,7 @@
   "sqltools.connectionExplorer.groupConnected": true,
   "sqltools.connections": [],
   "window.autoDetectColorScheme": false,
+  "git.autoRepositoryDetection": true,
+  "git.detectSubmodules": true,
+  "git.repositoryScanMaxDepth": 3,
 }

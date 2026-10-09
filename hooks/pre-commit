@@ -3,6 +3,9 @@
 # Wired up via `git config core.hooksPath hooks` (see setup.sh) — no symlinking needed.
 set -euo pipefail
 
+# Keep the local-only autoMode block out of commits before scanning.
+"$(dirname "$0")/strip-automode.sh"
+
 STAGED=$(git diff --cached --name-only --diff-filter=ACM 2>/dev/null)
 [ -z "$STAGED" ] && exit 0
 

@@ -1,6 +1,6 @@
 # Agent roster
 
-`~/.claude/agents/`: `developer` (scoped implementation), `debugger` (root-cause diagnosis, no fixes), `reviewer-architecture`/`reviewer-standards`/`reviewer-security`/`reviewer-correctness` (single-slice code review).
+`~/.claude/agents/`: `developer` (scoped implementation), `debugger` (root-cause diagnosis, no fixes), `reviewer-architecture`/`reviewer-standards`/`reviewer-security`/`reviewer-correctness`/`reviewer-simplicity`/`reviewer-testing`/`reviewer-requirements` (single-slice code review). `/codebase-review` runs them all across a whole project.
 
 Under the "Lead Architect" output style, the top-level session already orchestrates these directly — nothing further needed. Otherwise, apply the same principle manually for non-trivial personal-project engineering: scope tasks for `developer`, diagnose via `debugger` before open-ended fixes, review via the relevant `reviewer-*` before calling work done.
 

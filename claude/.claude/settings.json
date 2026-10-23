@@ -1,4 +1,7 @@
 {
+  "env": {
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/usage-band"
+  },
   "attribution": {
     "commit": "",
     "pr": "",
@@ -19,7 +22,7 @@
       "Bash(git restore *)"
     ]
   },
-  "model": "sonnet",
+  "model": "opusplan",
   "hooks": {
     "PreToolUse": [
       {
@@ -39,8 +42,8 @@
   "workflowKeywordTriggerEnabled": false,
   "enabledPlugins": {
     "gopls-lsp@claude-plugins-official": true,
-    "ruby-lsp@claude-plugins-official": true,
-    "figma@claude-plugins-official": true
+    "ruby-lsp@claude-plugins-official": false,
+    "figma@claude-plugins-official": false
   },
   "outputStyle": "Concise",
   "effortLevel": "high",
@@ -58,8 +61,5 @@
   "editorMode": "normal",
   "preferredNotifChannel": "auto",
   "inputNeededNotifEnabled": true,
-  "agentPushNotifEnabled": true,
-  "env": {
-    "CLAUDE_CODE_PLUGIN_DIRS": "~/.claude/mods/usage-band"
-  }
+  "agentPushNotifEnabled": true
 }

@@ -15,6 +15,9 @@
     "stripe": {
       "url": "https://mcp.stripe.com",
       "headers": {}
+    },
+    "posthog": {
+      "url": "https://mcp.posthog.com/mcp"
     }
   }
 }
